@@ -65,16 +65,6 @@
             font-size: 0.875rem;
         }
 
-        .screen {
-            display: none;
-        }
-
-        .screen.active {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-lg);
-        }
-
         .form-group {
             margin-bottom: var(--spacing-lg);
         }
@@ -87,7 +77,8 @@
         }
 
         .form-group input,
-        .form-group select {
+        .form-group select,
+        .form-group textarea {
             width: 100%;
             padding: var(--spacing-md);
             border: 1px solid var(--color-border);
@@ -97,11 +88,21 @@
             color: var(--color-text);
         }
 
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
         .form-group input:focus,
-        .form-group select:focus {
+        .form-group select:focus,
+        .form-group textarea:focus {
             outline: none;
             border-color: var(--color-primary);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .required {
+            color: var(--color-danger);
         }
 
         .btn {
@@ -130,31 +131,28 @@
             transform: translateY(0);
         }
 
-        .btn-secondary {
-            background-color: var(--color-surface);
-            color: var(--color-primary);
-            border: 2px solid var(--color-primary);
-            margin-top: var(--spacing-md);
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--color-bg);
-        }
-
-        .success-message {
-            background-color: rgba(5, 150, 105, 0.1);
-            border: 1px solid var(--color-success);
-            border-radius: var(--radius-md);
+        .alert {
             padding: var(--spacing-md);
-            color: var(--color-success);
-            text-align: center;
+            border-radius: var(--radius-md);
             margin-bottom: var(--spacing-lg);
             display: none;
         }
 
-        .success-message.show {
+        .alert.show {
             display: block;
             animation: slideIn 0.3s ease-in;
+        }
+
+        .alert-success {
+            background-color: rgba(5, 150, 105, 0.1);
+            border: 1px solid var(--color-success);
+            color: var(--color-success);
+        }
+
+        .alert-error {
+            background-color: rgba(220, 38, 38, 0.1);
+            border: 1px solid var(--color-danger);
+            color: var(--color-danger);
         }
 
         @keyframes slideIn {
@@ -168,87 +166,12 @@
             }
         }
 
-        .error-message {
-            background-color: rgba(220, 38, 38, 0.1);
-            border: 1px solid var(--color-danger);
-            border-radius: var(--radius-md);
-            padding: var(--spacing-md);
-            color: var(--color-danger);
-            margin-bottom: var(--spacing-lg);
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: var(--spacing-sm) var(--spacing-md);
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-align: center;
-            width: 100%;
-            margin: var(--spacing-md) 0;
-        }
-
-        .status-badge.active {
-            background-color: rgba(5, 150, 105, 0.1);
-            color: var(--color-success);
-            border: 1px solid var(--color-success);
-        }
-
-        .status-badge.inactive {
-            background-color: rgba(220, 38, 38, 0.1);
-            color: var(--color-danger);
-            border: 1px solid var(--color-danger);
-        }
-
-        .card {
-            background-color: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .card-title {
-            font-weight: 600;
-            color: var(--color-primary);
-            margin-bottom: var(--spacing-md);
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .card-content {
-            color: var(--color-text);
-            font-size: 0.95rem;
-        }
-
-        .exercise-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .exercise-list li {
-            padding: var(--spacing-sm) 0;
-            border-bottom: 1px solid var(--color-border);
-            color: var(--color-text-secondary);
-        }
-
-        .exercise-list li:last-child {
-            border-bottom: none;
-        }
-
         .info-text {
             color: var(--color-text-secondary);
             font-size: 0.875rem;
-            text-align: center;
-            padding: var(--spacing-md);
             background-color: rgba(37, 99, 235, 0.05);
             border-radius: var(--radius-md);
+            padding: var(--spacing-md);
             margin-bottom: var(--spacing-lg);
         }
 
@@ -261,230 +184,153 @@
                 font-size: 1.25rem;
             }
         }
-
-        @media print {
-            body {
-                background: white;
-            }
-
-            .btn,
-            .header p {
-                display: none;
-            }
-
-            .card {
-                break-inside: avoid;
-                box-shadow: none;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>⚽ Student Check-In</h1>
-            <p>View your injury status and recommended exercises</p>
+            <h1>Injury Report</h1>
+            <p>Submit your injury information</p>
         </div>
 
-        <!-- Check-In Screen -->
-        <div id="checkinScreen" class="screen active">
-            <div class="info-text">
-                Enter your name to view your current status and exercises
-            </div>
+        <div class="info-text">
+            Please fill out all fields with accurate information about your injury.
+        </div>
 
-            <div class="error-message" id="errorMessage"></div>
+        <div id="successMessage" class="alert alert-success">
+            ✓ Report submitted successfully!
+        </div>
 
+        <div id="errorMessage" class="alert alert-error">
+        </div>
+
+        <form id="checkinForm">
             <div class="form-group">
-                <label for="studentName">Student Name *</label>
+                <label for="studentName">
+                    Student Name <span class="required">*</span>
+                </label>
                 <input 
                     type="text" 
                     id="studentName" 
                     placeholder="Enter your full name"
+                    required
                     autocomplete="name"
                 >
             </div>
 
-            <button class="btn btn-primary" onclick="checkInStudent()">Check In</button>
-            
-            <p style="text-align: center; color: var(--color-text-secondary); font-size: 0.875rem; margin-top: var(--spacing-lg);">
-                💡 Your data is stored locally on this device
-            </p>
-        </div>
-
-        <!-- Status Screen -->
-        <div id="statusScreen" class="screen">
-            <div class="success-message" id="successMessage">
-                ✓ Checked in successfully!
+            <div class="form-group">
+                <label for="gradeLevel">
+                    Grade Level <span class="required">*</span>
+                </label>
+                <select id="gradeLevel" required>
+                    <option value="">-- Select Grade --</option>
+                    <option value="9th Grade">9th Grade</option>
+                    <option value="10th Grade">10th Grade</option>
+                    <option value="11th Grade">11th Grade</option>
+                    <option value="12th Grade">12th Grade</option>
+                </select>
             </div>
 
-            <div id="statusContent"></div>
+            <div class="form-group">
+                <label for="sport">
+                    Sport <span class="required">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    id="sport" 
+                    placeholder="e.g., Football, Basketball, Soccer"
+                    required
+                >
+            </div>
 
-            <button class="btn btn-secondary" onclick="returnToCheckin()">Check In Different Student</button>
-        </div>
+            <div class="form-group">
+                <label for="injuryDescription">
+                    Injury Description <span class="required">*</span>
+                </label>
+                <textarea 
+                    id="injuryDescription" 
+                    placeholder="Describe your injury in detail (where it hurts, how it happened, etc.)"
+                    required
+                ></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Report</button>
+        </form>
+
+        <p style="text-align: center; color: var(--color-text-secondary); font-size: 0.875rem; margin-top: var(--spacing-xl);">
+            Your report will be reviewed by the athletic trainer
+        </p>
     </div>
 
     <script>
-        // Initialize with sample data for demo - students would get real data from trainer
-        const studentData = {
-            'John Smith': {
-                sport: 'Football',
-                grade: '11th Grade',
-                lastUpdated: new Date().toLocaleDateString(),
-                injuryStatus: 'Active',
-                injuryType: 'Ankle Sprain',
-                severity: 6,
-                exercises: [
-                    'Ankle alphabet - trace letters with your foot',
-                    'Calf raises - rise up on toes, hold 2 seconds',
-                    'Single leg balance - stand on one leg for 30 seconds'
-                ],
-                stretches: [
-                    'Gastrocnemius stretch - bend one knee, straighten the other',
-                    'Soleus stretch - both knees bent, lean forward',
-                    'Dorsiflexion - pull toes toward shins'
-                ],
-                notes: 'Continue with current protocol. Reassess next week.'
-            },
-            'Sarah Johnson': {
-                sport: 'Soccer',
-                grade: '10th Grade',
-                lastUpdated: new Date().toLocaleDateString(),
-                injuryStatus: 'Cleared',
-                injuryType: 'Calf Strain',
-                severity: 0,
-                exercises: [],
-                stretches: [],
-                notes: 'Cleared for full activity as of today.'
-            },
-            'Mike Chen': {
-                sport: 'Basketball',
-                grade: '12th Grade',
-                lastUpdated: new Date().toLocaleDateString(),
-                injuryStatus: 'Active',
-                injuryType: 'Knee Strain',
-                severity: 4,
-                exercises: [
-                    'Quad strengthening',
-                    'Glute activation',
-                    'Hamstring work'
-                ],
-                stretches: [
-                    'Quadriceps stretch',
-                    'IT band stretch',
-                    'Hamstring stretch'
-                ],
-                notes: 'Avoid explosive movements. Focus on strengthening.'
-            }
-        };
+        const STORAGE_KEY = 'athleticTrainerReports';
 
-        function checkInStudent() {
-            const name = document.getElementById('studentName').value.trim();
+        function loadReports() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+
+        function saveReports(reports) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(reports));
+        }
+
+        document.getElementById('checkinForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const studentName = document.getElementById('studentName').value.trim();
+            const gradeLevel = document.getElementById('gradeLevel').value.trim();
+            const sport = document.getElementById('sport').value.trim();
+            const injuryDescription = document.getElementById('injuryDescription').value.trim();
+
             const errorMsg = document.getElementById('errorMessage');
+            const successMsg = document.getElementById('successMessage');
 
-            // Clear previous error
+            // Clear previous messages
             errorMsg.classList.remove('show');
+            successMsg.classList.remove('show');
             errorMsg.textContent = '';
 
-            if (!name) {
-                errorMsg.textContent = 'Please enter your name';
+            // Validate
+            if (!studentName || !gradeLevel || !sport || !injuryDescription) {
+                errorMsg.textContent = 'Please fill out all required fields';
                 errorMsg.classList.add('show');
                 return;
             }
 
-            // Check if student exists in data
-            const student = Object.keys(studentData).find(
-                key => key.toLowerCase() === name.toLowerCase()
-            );
+            // Create report object
+            const report = {
+                id: Date.now().toString(),
+                studentName: studentName,
+                gradeLevel: gradeLevel,
+                sport: sport,
+                injuryDescription: injuryDescription,
+                createdAt: new Date().toISOString(),
+                source: 'student_checkin',
+                status: 'new'
+            };
 
-            if (!student) {
-                errorMsg.textContent = `No records found for "${name}". Please check your name and try again.`;
-                errorMsg.classList.add('show');
-                return;
-            }
-
-            // Display status
-            displayStudentStatus(student);
-            document.getElementById('checkinScreen').classList.remove('active');
-            document.getElementById('statusScreen').classList.add('active');
+            // Save to localStorage
+            const reports = loadReports();
+            reports.push(report);
+            saveReports(reports);
 
             // Show success message
-            const successMsg = document.getElementById('successMessage');
             successMsg.classList.add('show');
-            setTimeout(() => successMsg.classList.remove('show'), 3000);
-        }
 
-        function displayStudentStatus(studentName) {
-            const student = studentData[studentName];
-            const container = document.getElementById('statusContent');
+            // Reset form
+            this.reset();
 
-            let html = `
-                <div class="card">
-                    <div class="card-title">Personal Information</div>
-                    <div class="card-content">
-                        <p><strong>Name:</strong> ${studentName}</p>
-                        <p><strong>Sport:</strong> ${student.sport}</p>
-                        <p><strong>Grade:</strong> ${student.grade}</p>
-                        <p><strong>Last Updated:</strong> ${student.lastUpdated}</p>
-                    </div>
-                </div>
+            // Hide success message after 3 seconds
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 3000);
+        });
 
-                <div class="card">
-                    <div class="card-title">Injury Status</div>
-                    <div class="status-badge ${student.injuryStatus === 'Cleared' ? 'active' : 'inactive'}">
-                        ${student.injuryStatus === 'Cleared' ? '✓ CLEARED FOR ACTIVITY' : '⚠ ACTIVE RESTRICTION'}
-                    </div>
-                    <div class="card-content" style="margin-top: var(--spacing-md);">
-                        <p><strong>Injury:</strong> ${student.injuryType}</p>
-                        <p><strong>Severity:</strong> ${student.severity}/10</p>
-                    </div>
-                </div>
-            `;
-
-            if (student.exercises.length > 0) {
-                html += `
-                    <div class="card">
-                        <div class="card-title">Recommended Exercises</div>
-                        <ul class="exercise-list">
-                            ${student.exercises.map(ex => `<li>✓ ${ex}</li>`).join('')}
-                        </ul>
-                    </div>
-                `;
-            }
-
-            if (student.stretches.length > 0) {
-                html += `
-                    <div class="card">
-                        <div class="card-title">Recommended Stretches</div>
-                        <ul class="exercise-list">
-                            ${student.stretches.map(st => `<li>⚡ ${st}</li>`).join('')}
-                        </ul>
-                    </div>
-                `;
-            }
-
-            if (student.notes) {
-                html += `
-                    <div class="card">
-                        <div class="card-title">Trainer Notes</div>
-                        <div class="card-content">${student.notes}</div>
-                    </div>
-                `;
-            }
-
-            container.innerHTML = html;
-        }
-
-        function returnToCheckin() {
-            document.getElementById('statusScreen').classList.remove('active');
-            document.getElementById('checkinScreen').classList.add('active');
-            document.getElementById('studentName').value = '';
-            document.getElementById('errorMessage').classList.remove('show');
-        }
-
-        // Allow Enter key to submit
-        document.getElementById('studentName').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkInStudent();
+        // Allow Enter key in form
+        document.getElementById('checkinForm').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                this.dispatchEvent(new Event('submit'));
             }
         });
     </script>
