@@ -189,7 +189,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Injury Report</h1>
+            <h1>⚽ Injury Report</h1>
             <p>Submit your injury information</p>
         </div>
 
@@ -263,7 +263,9 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'athleticTrainerReports';
+        // FIXED: Use same key as trainer app so data syncs
+        const STORAGE_KEY = 'trainerAppReports877589';
+        const TRAINER_ID = 877589;
 
         function loadReports() {
             const data = localStorage.getItem(STORAGE_KEY);
@@ -297,7 +299,7 @@
                 return;
             }
 
-            // Create report object
+            // Create report object - MUST match trainer app structure
             const report = {
                 id: Date.now().toString(),
                 studentName: studentName,
@@ -305,6 +307,7 @@
                 sport: sport,
                 injuryDescription: injuryDescription,
                 createdAt: new Date().toISOString(),
+                updatedAt: null,
                 source: 'student_checkin',
                 status: 'new'
             };
@@ -313,6 +316,9 @@
             const reports = loadReports();
             reports.push(report);
             saveReports(reports);
+
+            console.log('Report saved:', report);
+            console.log('Total reports in storage:', reports.length);
 
             // Show success message
             successMsg.classList.add('show');
@@ -332,6 +338,13 @@
                 e.preventDefault();
                 this.dispatchEvent(new Event('submit'));
             }
+        });
+
+        // Debug: Log storage on load
+        window.addEventListener('load', function() {
+            console.log('Student Check-In Form Loaded');
+            console.log('Using storage key:', STORAGE_KEY);
+            console.log('Current reports in storage:', loadReports());
         });
     </script>
 </body>
